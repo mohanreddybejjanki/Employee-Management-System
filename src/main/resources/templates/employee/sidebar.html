@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="sidebar(active)" class="sidebar">
+    <div class="sidebar-logo">
+        <h2>🏢 EMP System</h2>
+        <span>Employee Portal</span>
+    </div>
+    <div class="sidebar-user">
+        <div class="avatar" th:text="${employee != null ? employee.firstName.substring(0,1) : 'E'}">E</div>
+        <div class="info">
+            <strong th:text="${employee != null ? employee.fullName : user.username}">Employee</strong>
+            <small th:text="${employee != null ? employee.designation : 'Employee'}">Role</small>
+        </div>
+    </div>
+    <nav>
+        <div class="nav-section">My Portal</div>
+        <a th:href="@{/employee/dashboard}" th:classappend="${active=='dashboard'} ? 'active' : ''">
+            <span class="icon">📊</span> Dashboard
+        </a>
+        <a th:href="@{/employee/profile}" th:classappend="${active=='profile'} ? 'active' : ''">
+            <span class="icon">👤</span> My Profile
+        </a>
+        <a th:href="@{/employee/myteam}" th:classappend="${active=='myteam'} ? 'active' : ''">
+            <span class="icon">🤝</span> My Team
+        </a>
+
+        <div class="nav-section">Work</div>
+        <a th:href="@{/employee/attendance}" th:classappend="${active=='attendance'} ? 'active' : ''">
+            <span class="icon">📋</span> My Attendance
+        </a>
+        <a th:href="@{/employee/leaves}" th:classappend="${active=='leaves'} ? 'active' : ''">
+            <span class="icon">📅</span> My Leaves
+        </a>
+        <a th:href="@{/employee/overtime}" th:classappend="${active=='overtime'} ? 'active' : ''">
+            <span class="icon">⏰</span> Overtime
+        </a>
+        <a th:href="@{/employee/salary}" th:classappend="${active=='salary'} ? 'active' : ''">
+            <span class="icon">💰</span> My Salary
+        </a>
+        <a th:href="@{/employee/assets}" th:classappend="${active=='assets'} ? 'active' : ''">
+            <span class="icon">💻</span> My Assets
+        </a>
+        <a th:href="@{/employee/idcard}" th:classappend="${active=='idcard'} ? ' active' : ''">
+            <span class="icon">🪪</span>
+            <span class="nav-label">My ID Card</span>
+        </a>
+
+        <div class="nav-section">Info</div>
+        <a th:href="@{/employee/announcements}" th:classappend="${active=='announcements'} ? 'active' : ''">
+            <span class="icon">📢</span> Announcements
+        </a>
+    </nav>
+    <div class="sidebar-footer">
+        <a th:href="@{/logout}">🚪 Logout</a>
+    </div>
+</div>
+</body>
+</html>

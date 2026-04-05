@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>Training – EMP</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"></head>
+<div class="sidebar-overlay" id="overlay"></div>
+<script th:src="@{/js/app.js}"></script>
+<body>
+<div class="layout">
+    <div th:replace="~{admin/sidebar :: sidebar('training')}"></div>
+    <div class="main-content">
+        <div class="topbar">
+            <h1>🎓 Training & Certifications</h1>
+            <div class="topbar-right">
+                <a th:href="@{/admin/training/add}" class="btn btn-primary btn-sm">+ Add Training</a>
+            </div>
+        </div>
+        <div class="page-body">
+            <div th:if="${success}" class="alert alert-success">✅ <span th:text="${success}"></span></div>
+            <div class="card">
+                <div class="card-header"><h3>All Training Records</h3></div>
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>#</th><th>Employee</th><th>Training</th><th>Provider</th><th>Start</th><th>End</th><th>Status</th><th>Certified</th><th>Action</th></tr></thead>
+                        <tbody>
+                        <tr th:each="t, s : ${trainings}">
+                            <td th:text="${s.count}"></td>
+                            <td th:text="${t.employee.fullName}"></td>
+                            <td style="font-weight:600;" th:text="${t.trainingName}"></td>
+                            <td th:text="${t.provider ?: '-'}"></td>
+                            <td th:text="${t.startDate}"></td>
+                            <td th:text="${t.endDate ?: '-'}"></td>
+                            <td>
+                                    <span class="badge"
+                                          th:classappend="${t.status=='COMPLETED'} ? 'badge-success' : (${t.status=='ONGOING'} ? 'badge-primary' : 'badge-warning')"
+                                          th:text="${t.status}"></span>
+                            </td>
+                            <td>
+                                <span class="badge" th:classappend="${t.certification=='YES'} ? 'badge-success' : 'badge-secondary'" th:text="${t.certification}"></span>
+                            </td>
+                            <td>
+                                <a th:href="@{/admin/training/delete/{id}(id=${t.id})}" class="btn btn-danger btn-xs" onclick="return confirm('Delete?')">🗑</a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(trainings)}">
+                            <td colspan="9" style="text-align:center;padding:24px;color:#64748b;">No training records yet.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body></html>

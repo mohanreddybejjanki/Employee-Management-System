@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>My Team – EMP</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"></head>
+<body>
+<div class="layout">
+    <div th:replace="~{employee/sidebar :: sidebar('myteam')}"></div>
+    <div class="main-content">
+        <div class="topbar">
+            <h1>🤝 My Team</h1>
+            <div class="topbar-right"><span class="badge-pill" th:text="${employee.fullName}"></span></div>
+        </div>
+        <div class="page-body">
+            <div class="alert alert-info">
+                📂 Department: <strong th:text="${employee.department != null ? employee.department.name : 'N/A'}"></strong>
+            </div>
+            <div class="stats-grid">
+                <div th:each="member : ${team}" class="card" style="padding:20px;display:flex;gap:16px;align-items:center;">
+                    <div class="profile-avatar" style="width:48px;height:48px;font-size:1.2rem;background:linear-gradient(135deg,#0ea5e9,#0284c7);"
+                         th:text="${member.firstName.substring(0,1)}"></div>
+                    <div>
+                        <div style="font-weight:700;" th:text="${member.fullName}"></div>
+                        <div style="font-size:.8rem;color:#64748b;" th:text="${member.designation}"></div>
+                        <div style="font-size:.75rem;color:#0ea5e9;" th:text="${member.email}"></div>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${team == null or #lists.isEmpty(team)}" class="empty-state">
+                <div class="icon">🤝</div>
+                <p>No team members found in your department.</p>
+            </div>
+        </div>
+    </div>
+</div>
+</body></html>

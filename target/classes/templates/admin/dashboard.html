@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div class="sidebar-overlay" id="overlay"></div>
+<script th:src="@{/js/app.js}"></script>
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard – EMP Management System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="layout">
+    <div th:replace="~{admin/sidebar :: sidebar('dashboard')}"></div>
+    <div class="main-content">
+        <div class="topbar">
+            <h1>📊 Dashboard</h1>
+            <div class="topbar-right">
+                <span class="badge-pill" th:text="'Welcome, ' + ${user.username}"></span>
+            </div>
+        </div>
+        <div class="page-body">
+
+            <!-- Flash messages -->
+            <div th:if="${success}" class="alert alert-success">✅ <span th:text="${success}"></span></div>
+            <div th:if="${error}"   class="alert alert-danger">⚠️ <span th:text="${error}"></span></div>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon sky">👥</div>
+                    <div class="stat-info">
+                        <h3 th:text="${totalEmployees}">0</h3>
+                        <p>Total Employees</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">✅</div>
+                    <div class="stat-info">
+                        <h3 th:text="${activeEmployees}">0</h3>
+                        <p>Active Employees</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon blue">🏬</div>
+                    <div class="stat-info">
+                        <h3 th:text="${totalDepartments}">0</h3>
+                        <p>Departments</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange">📅</div>
+                    <div class="stat-info">
+                        <h3 th:text="${pendingLeaves}">0</h3>
+                        <p>Pending Leaves</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main content grid -->
+            <div class="dash-grid-3">
+                <!-- Recent Employees -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>👥 Employees</h3>
+                        <a th:href="@{/admin/employees/add}" class="btn btn-primary btn-sm">+ Add New</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Department</th>
+                                    <th>Designation</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="emp : ${employees}">
+                                    <td>
+                                        <div style="font-weight:600;" th:text="${emp.fullName}"></div>
+                                        <div style="font-size:.75rem;color:#64748b;" th:text="${emp.employeeCode}"></div>
+                                    </td>
+                                    <td th:text="${emp.department != null ? emp.department.name : '-'}"></td>
+                                    <td th:text="${emp.designation}"></td>
+                                    <td>
+                                        <span class="badge"
+                                              th:classappend="${emp.status == 'ACTIVE'} ? 'badge-success' : 'badge-danger'"
+                                              th:text="${emp.status}"></span>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(employees)}">
+                                    <td colspan="4" class="text-center" style="color:#64748b;padding:24px;">No employees found</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Right column -->
+                <div style="display:flex;flex-direction:column;gap:20px;">
+                    <!-- Departments -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>🏬 Departments</h3>
+                            <a th:href="@{/admin/departments}" class="btn btn-outline btn-sm">View All</a>
+                        </div>
+                        <div class="card-body" style="padding:12px 20px;">
+                            <div th:each="dept : ${departments}" style="padding:8px 0;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;">
+                                <div>
+                                    <div style="font-weight:600;font-size:.875rem;" th:text="${dept.name}"></div>
+                                    <div style="font-size:.75rem;color:#64748b;" th:text="${dept.hodName}"></div>
+                                </div>
+                                <span class="badge badge-primary"
+                                      th:text="${dept.employees != null ? dept.employees.size() : 0} + ' emp'"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pending Leaves -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>📅 Pending Leaves</h3>
+                            <a th:href="@{/admin/leaves}" class="btn btn-outline btn-sm">View All</a>
+                        </div>
+                        <div class="card-body" style="padding:12px 20px;">
+                            <div th:each="leave : ${recentLeaves}" style="padding:8px 0;border-bottom:1px solid #e2e8f0;">
+                                <div style="font-weight:600;font-size:.85rem;" th:text="${leave.employee.fullName}"></div>
+                                <div style="font-size:.75rem;color:#64748b;">
+                                    <span th:text="${leave.leaveType}"></span> |
+                                    <span th:text="${leave.fromDate}"></span> →
+                                    <span th:text="${leave.toDate}"></span>
+                                </div>
+                                <div style="margin-top:4px;display:flex;gap:6px;">
+                                    <form th:action="@{/admin/leaves/approve/{id}(id=${leave.id})}" method="post" style="display:inline;">
+                                        <button class="btn btn-success btn-xs">✓ Approve</button>
+                                    </form>
+                                    <form th:action="@{/admin/leaves/reject/{id}(id=${leave.id})}" method="post" style="display:inline;">
+                                        <button class="btn btn-danger btn-xs">✗ Reject</button>
+                                    </form>
+                                </div>
+                            </div>
+                            <div th:if="${#lists.isEmpty(recentLeaves)}" class="empty-state" style="padding:20px 0;">
+                                <p>No pending leave requests 🎉</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Announcements -->
+            <div class="card" style="margin-top:20px;">
+                <div class="card-header">
+                    <h3>📢 Recent Announcements</h3>
+                    <a th:href="@{/admin/announcements/add}" class="btn btn-primary btn-sm">+ Post Announcement</a>
+                </div>
+                <div class="card-body">
+                    <div th:each="ann : ${announcements}" class="ann-item">
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                            <h4 th:text="${ann.title}"></h4>
+                            <span class="badge"
+                                  th:classappend="${ann.priority == 'HIGH'} ? 'badge-danger' : (${ann.priority == 'MEDIUM'} ? 'badge-warning' : 'badge-secondary')"
+                                  th:text="${ann.priority}"></span>
+                        </div>
+                        <p th:text="${ann.content}"></p>
+                        <div class="ann-meta">Posted by <strong th:text="${ann.postedBy}"></strong> on <span th:text="${ann.postedOn}"></span></div>
+                    </div>
+                    <div th:if="${#lists.isEmpty(announcements)}" class="empty-state">
+                        <div class="icon">📢</div>
+                        <p>No announcements yet</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

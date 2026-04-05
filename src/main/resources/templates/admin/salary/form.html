@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div class="sidebar-overlay" id="overlay"></div>
+<script th:src="@{/js/app.js}"></script>
+<head>
+    <meta charset="UTF-8">
+    <title>Generate Salary – EMP Management System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="layout">
+    <div th:replace="~{admin/sidebar :: sidebar('salary')}"></div>
+    <div class="main-content">
+        <div class="topbar">
+            <h1>💰 Generate Salary</h1>
+            <div class="topbar-right">
+                <a th:href="@{/admin/salary}" class="btn btn-secondary btn-sm">← Back</a>
+            </div>
+        </div>
+        <div class="page-body">
+            <div th:if="${error}" class="alert alert-danger">⚠️ <span th:text="${error}"></span></div>
+
+            <div class="card" style="max-width:700px;">
+                <div class="card-header"><h3>Generate Payslip</h3></div>
+                <div class="card-body">
+                    <form th:action="@{/admin/salary/generate}" method="post">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Employee *</label>
+                                <select name="employeeId" class="form-control" required>
+                                    <option value="">-- Select Employee --</option>
+                                    <option th:each="emp : ${employees}"
+                                            th:value="${emp.id}"
+                                            th:text="${emp.fullName} + ' (' + ${emp.employeeCode} + ')'"></option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Month *</label>
+                                <select name="month" class="form-control" required>
+                                    <option value="1">January</option>
+                                    <option value="2">February</option>
+                                    <option value="3">March</option>
+                                    <option value="4">April</option>
+                                    <option value="5">May</option>
+                                    <option value="6">June</option>
+                                    <option value="7">July</option>
+                                    <option value="8">August</option>
+                                    <option value="9">September</option>
+                                    <option value="10">October</option>
+                                    <option value="11">November</option>
+                                    <option value="12">December</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Year *</label>
+                                <input type="number" name="year" class="form-control" value="2025" min="2020" max="2030" required>
+                            </div>
+                            <div class="form-group">
+                                <label>HRA (₹)</label>
+                                <input type="number" name="hra" class="form-control" value="0" min="0" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label>DA – Dearness Allowance (₹)</label>
+                                <input type="number" name="da" class="form-control" value="0" min="0" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label>Medical Allowance (₹)</label>
+                                <input type="number" name="medicalAllowance" class="form-control" value="0" min="0" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label>PF Deduction (₹)</label>
+                                <input type="number" name="pf" class="form-control" value="0" min="0" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label>Tax Deduction (₹)</label>
+                                <input type="number" name="tax" class="form-control" value="0" min="0" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label>Other Deductions (₹)</label>
+                                <input type="number" name="otherDeductions" class="form-control" value="0" min="0" step="0.01">
+                            </div>
+                        </div>
+
+                        <div class="flex-gap" style="margin-top:20px;">
+                            <button type="submit" class="btn btn-primary">💾 Generate Salary</button>
+                            <a th:href="@{/admin/salary}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>ID Card – EMP System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<div class="sidebar-overlay" id="overlay"></div>
+<script th:src="@{/js/app.js}"></script>
+<body>
+<div class="layout">
+    <div th:replace="~{admin/sidebar :: sidebar('employees')}"></div>
+    <div class="main-content">
+        <div class="topbar">
+            <div class="topbar-left">
+                <div class="breadcrumb">
+                    <span>Employees</span>
+                    <span class="breadcrumb-sep">›</span>
+                    <span class="breadcrumb-current">ID Card</span>
+                </div>
+            </div>
+            <div class="topbar-right">
+                <button onclick="window.print()" class="btn btn-primary btn-sm">🖨 Print ID Card</button>
+                <a th:href="@{/admin/employees}" class="btn btn-secondary btn-sm">← Back</a>
+            </div>
+        </div>
+        <div class="page-body">
+            <div style="display:flex;justify-content:center;padding:20px 0;">
+                <div class="id-card">
+                    <div class="id-card-header">
+                        <div class="id-card-logo">🏢 EMP Management System</div>
+                        <div class="id-card-title">Official Employee Identity Card</div>
+                    </div>
+                    <div class="id-card-body">
+                        <div class="id-avatar"
+                             th:text="${employee.firstName.substring(0,1)}"></div>
+                        <div class="id-name"   th:text="${employee.fullName}"></div>
+                        <div class="id-role"   th:text="${employee.designation}"></div>
+                        <div class="id-code"   th:text="${employee.employeeCode}"></div>
+                    </div>
+                    <div class="id-card-details">
+                        <div class="id-detail-row">
+                            <span>Department</span>
+                            <span th:text="${employee.department != null ? employee.department.name : '-'}"></span>
+                        </div>
+                        <div class="id-detail-row">
+                            <span>Email</span>
+                            <span th:text="${employee.email}"></span>
+                        </div>
+                        <div class="id-detail-row">
+                            <span>Phone</span>
+                            <span th:text="${employee.phone ?: '-'}"></span>
+                        </div>
+                        <div class="id-detail-row">
+                            <span>Join Date</span>
+                            <span th:text="${employee.joinDate ?: '-'}"></span>
+                        </div>
+                        <div class="id-detail-row">
+                            <span>Status</span>
+                            <span th:text="${employee.status}"></span>
+                        </div>
+                    </div>
+                    <div class="id-card-footer">
+                        <span>EMP System</span>
+                        <span>Hyderabad, Telangana</span>
+                        <span>Valid 2026</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

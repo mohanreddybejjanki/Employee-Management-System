@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>Assets – EMP</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"></head>
+<div class="sidebar-overlay" id="overlay"></div>
+<script th:src="@{/js/app.js}"></script>
+<body>
+<div class="layout">
+    <div th:replace="~{admin/sidebar :: sidebar('assets')}"></div>
+    <div class="main-content">
+        <div class="topbar">
+            <h1>💻 Asset Management</h1>
+            <div class="topbar-right">
+                <a th:href="@{/admin/assets/add}" class="btn btn-primary btn-sm">+ Add Asset</a>
+            </div>
+        </div>
+        <div class="page-body">
+            <div th:if="${success}" class="alert alert-success">✅ <span th:text="${success}"></span></div>
+            <div class="card">
+                <div class="card-header"><h3>All Assets</h3></div>
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>#</th><th>Asset Code</th><th>Name</th><th>Type</th><th>Brand</th><th>Assigned To</th><th>Condition</th><th>Status</th><th>Action</th></tr></thead>
+                        <tbody>
+                        <tr th:each="a, s : ${assets}">
+                            <td th:text="${s.count}"></td>
+                            <td><span class="badge badge-secondary" th:text="${a.assetCode}"></span></td>
+                            <td style="font-weight:600;" th:text="${a.assetName}"></td>
+                            <td th:text="${a.assetType}"></td>
+                            <td th:text="${a.brand ?: '-'}"></td>
+                            <td th:text="${a.assignedTo != null ? a.assignedTo.fullName : 'Unassigned'}"></td>
+                            <td>
+                                    <span class="badge"
+                                          th:classappend="${a.condition=='GOOD'} ? 'badge-success' : (${a.condition=='DAMAGED'} ? 'badge-danger' : 'badge-warning')"
+                                          th:text="${a.condition}"></span>
+                            </td>
+                            <td>
+                                    <span class="badge"
+                                          th:classappend="${a.status=='ASSIGNED'} ? 'badge-primary' : (${a.status=='AVAILABLE'} ? 'badge-success' : 'badge-secondary')"
+                                          th:text="${a.status}"></span>
+                            </td>
+                            <td>
+                                <a th:href="@{/admin/assets/delete/{id}(id=${a.id})}" class="btn btn-danger btn-xs" onclick="return confirm('Delete?')">🗑</a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(assets)}">
+                            <td colspan="9" style="text-align:center;padding:24px;color:#64748b;">No assets found.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body></html>

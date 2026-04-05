@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div class="sidebar-overlay" id="overlay"></div>
+<script th:src="@{/js/app.js}"></script>
+<head>
+    <meta charset="UTF-8">
+    <title>Reports – EMP Management System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="sidebar-overlay" id="overlay"></div>
+<div class="layout">
+    <div th:replace="~{admin/sidebar :: sidebar('reports')}"></div>
+    <div class="main-content">
+
+        <div class="topbar">
+            <div class="topbar-left">
+                <div class="hamburger" id="hamburger">
+                    <span></span><span></span><span></span>
+                </div>
+                <div>
+                    <div class="breadcrumb">
+                        <span>Admin</span>
+                        <span class="breadcrumb-sep">›</span>
+                        <span class="breadcrumb-current">Reports</span>
+                    </div>
+                    <div class="topbar-title">📈 Reports & Analytics</div>
+                </div>
+            </div>
+            <div class="topbar-right">
+                <button onclick="window.print()" class="btn btn-outline btn-sm">🖨 Print</button>
+                <div class="topbar-user">
+                    <div class="mini-avatar">A</div>
+                    <span th:text="${user.username}">Admin</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-body">
+            <!-- Summary Stats -->
+            <div class="stats-grid">
+                <div class="stat-card" data-icon="👥">
+                    <div class="stat-icon sky">👥</div>
+                    <div class="stat-info">
+                        <h3 th:text="${totalEmp}">0</h3>
+                        <p>Total Employees</p>
+                        <span class="stat-trend up">↑ Active</span>
+                    </div>
+                </div>
+                <div class="stat-card" data-icon="🏬">
+                    <div class="stat-icon blue">🏬</div>
+                    <div class="stat-info">
+                        <h3 th:text="${totalDept}">0</h3>
+                        <p>Departments</p>
+                    </div>
+                </div>
+                <div class="stat-card" data-icon="📅">
+                    <div class="stat-icon orange">📅</div>
+                    <div class="stat-info">
+                        <h3 th:text="${pendingLeaves}">0</h3>
+                        <p>Pending Leaves</p>
+                    </div>
+                </div>
+                <div class="stat-card" data-icon="✅">
+                    <div class="stat-icon green">✅</div>
+                    <div class="stat-info">
+                        <h3 th:text="${activeEmp}">0</h3>
+                        <p>Active Employees</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Department Headcount -->
+            <div class="card" style="margin-bottom:20px;">
+                <div class="card-header">
+                    <h3>🏬 Department Headcount</h3>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Department</th>
+                            <th>Head of Dept</th>
+                            <th>Description</th>
+                            <th>Employees</th>
+                            <th>% of Workforce</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="dept, s : ${departments}">
+                            <td th:text="${s.count}"></td>
+                            <td style="font-weight:700;" th:text="${dept.name}"></td>
+                            <td th:text="${dept.hodName ?: '-'}"></td>
+                            <td th:text="${dept.description ?: '-'}"></td>
+                            <td>
+                                    <span class="badge badge-primary"
+                                          th:text="${dept.employees != null ? dept.employees.size() : 0} + ' employees'"></span>
+                            </td>
+                            <td>
+                                <div style="display:flex;align-items:center;gap:8px;">
+                                    <div style="flex:1;height:6px;background:#e0f2fe;border-radius:4px;overflow:hidden;">
+                                        <div style="height:100%;background:#0ea5e9;border-radius:4px;"
+                                             th:style="'width:' + ${totalEmp > 0 ? (dept.employees != null ? dept.employees.size() : 0) * 100 / totalEmp : 0} + '%'"></div>
+                                    </div>
+                                    <span style="font-size:.75rem;font-weight:700;color:#0284c7;min-width:36px;"
+                                          th:text="${totalEmp > 0 ? #numbers.formatDecimal((dept.employees != null ? dept.employees.size() : 0) * 100.0 / totalEmp, 1, 1) : 0} + '%'"></span>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Employee Full Report -->
+            <div class="card" style="margin-bottom:20px;">
+                <div class="card-header">
+                    <h3>👥 Employee Directory Report</h3>
+                    <span class="badge badge-primary" th:text="${totalEmp} + ' total'"></span>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Code</th>
+                            <th>Name</th>
+                            <th>Gender</th>
+                            <th>Department</th>
+                            <th>Designation</th>
+                            <th>Join Date</th>
+                            <th>Salary</th>
+                            <th>Status</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="emp, s : ${employees}">
+                            <td th:text="${s.count}"></td>
+                            <td><span class="badge badge-secondary" th:text="${emp.employeeCode}"></span></td>
+                            <td>
+                                <div style="font-weight:600;" th:text="${emp.fullName}"></div>
+                                <div style="font-size:.72rem;color:#64748b;" th:text="${emp.email}"></div>
+                            </td>
+                            <td th:text="${emp.gender ?: '-'}"></td>
+                            <td th:text="${emp.department != null ? emp.department.name : '-'}"></td>
+                            <td th:text="${emp.designation}"></td>
+                            <td th:text="${emp.joinDate ?: '-'}"></td>
+                            <td style="font-weight:700;color:#0284c7;">
+                                ₹<span th:text="${#numbers.formatDecimal(emp.basicSalary,1,'COMMA',0,'POINT')}"></span>
+                            </td>
+                            <td>
+                                    <span class="badge"
+                                          th:classappend="${emp.status=='ACTIVE'} ? 'badge-success' : 'badge-danger'"
+                                          th:text="${emp.status}"></span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Leave Report -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>📅 Leave Summary Report</h3>
+                    <span class="badge badge-warning" th:text="${pendingLeaves} + ' pending'"></span>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Employee</th>
+                            <th>Type</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Applied On</th>
+                            <th>Status</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="l, s : ${allLeaves}">
+                            <td th:text="${s.count}"></td>
+                            <td style="font-weight:600;" th:text="${l.employee.fullName}"></td>
+                            <td><span class="badge badge-primary" th:text="${l.leaveType}"></span></td>
+                            <td th:text="${l.fromDate}"></td>
+                            <td th:text="${l.toDate}"></td>
+                            <td th:text="${l.appliedOn}"></td>
+                            <td>
+                                    <span class="badge"
+                                          th:classappend="${l.status=='APPROVED'} ? 'badge-success' : (${l.status=='REJECTED'} ? 'badge-danger' : 'badge-warning')"
+                                          th:text="${l.status}"></span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(allLeaves)}" class="table-empty">
+                            <td colspan="7">
+                                <span class="empty-icon">📅</span>
+                                <p>No leave records found.</p>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

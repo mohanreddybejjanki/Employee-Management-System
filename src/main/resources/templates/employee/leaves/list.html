@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Leaves – EMP Management System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="layout">
+    <div th:replace="~{employee/sidebar :: sidebar('leaves')}"></div>
+    <div class="main-content">
+        <div class="topbar">
+            <h1>📅 My Leaves</h1>
+            <div class="topbar-right">
+                <a th:href="@{/employee/leaves/apply}" class="btn btn-primary btn-sm">+ Apply Leave</a>
+            </div>
+        </div>
+        <div class="page-body">
+            <div th:if="${success}" class="alert alert-success">✅ <span th:text="${success}"></span></div>
+
+            <div class="card">
+                <div class="card-header"><h3>My Leave Requests</h3></div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Leave Type</th>
+                                <th>From Date</th>
+                                <th>To Date</th>
+                                <th>Reason</th>
+                                <th>Applied On</th>
+                                <th>Status</th>
+                                <th>Admin Comment</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="leave, stat : ${leaves}">
+                                <td th:text="${stat.count}"></td>
+                                <td><span class="badge badge-primary" th:text="${leave.leaveType}"></span></td>
+                                <td th:text="${leave.fromDate}"></td>
+                                <td th:text="${leave.toDate}"></td>
+                                <td th:text="${leave.reason}"></td>
+                                <td th:text="${leave.appliedOn}"></td>
+                                <td>
+                                    <span class="badge"
+                                          th:classappend="${leave.status=='APPROVED'} ? 'badge-success' : (${leave.status=='REJECTED'} ? 'badge-danger' : 'badge-warning')"
+                                          th:text="${leave.status}"></span>
+                                </td>
+                                <td th:text="${leave.adminComment ?: '-'}"></td>
+                            </tr>
+                            <tr th:if="${leaves == null or #lists.isEmpty(leaves)}">
+                                <td colspan="8" style="text-align:center;padding:32px;color:#64748b;">
+                                    No leave requests yet. <a th:href="@{/employee/leaves/apply}">Apply now?</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

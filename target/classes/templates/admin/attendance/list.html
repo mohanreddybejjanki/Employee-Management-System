@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Attendance – EMP Management System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<div class="sidebar-overlay" id="overlay"></div>
+<script th:src="@{/js/app.js}"></script>
+<body>
+<div class="layout">
+    <div th:replace="~{admin/sidebar :: sidebar('attendance')}"></div>
+    <div class="main-content">
+        <div class="topbar">
+            <h1>📋 Attendance</h1>
+            <div class="topbar-right">
+                <a th:href="@{/admin/attendance/mark}" class="btn btn-primary btn-sm">+ Mark Attendance</a>
+            </div>
+        </div>
+        <div class="page-body">
+            <div th:if="${success}" class="alert alert-success">✅ <span th:text="${success}"></span></div>
+
+            <!-- Date filter -->
+            <div class="card" style="margin-bottom:20px;">
+                <div class="card-body" style="padding:14px 20px;">
+                    <form th:action="@{/admin/attendance}" method="get" class="flex-gap">
+                        <label style="font-weight:600;">Filter by Date:</label>
+                        <input type="date" name="date" class="form-control"
+                               th:value="${selectedDate}" style="width:200px;">
+                        <button type="submit" class="btn btn-primary btn-sm">🔍 Filter</button>
+                        <a th:href="@{/admin/attendance}" class="btn btn-secondary btn-sm">Today</a>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Attendance for <span th:text="${selectedDate}"></span></h3>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Employee</th>
+                                <th>Department</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Check In</th>
+                                <th>Check Out</th>
+                                <th>Remarks</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="att, stat : ${attendances}">
+                                <td th:text="${stat.count}"></td>
+                                <td>
+                                    <div style="font-weight:600;" th:text="${att.employee.fullName}"></div>
+                                    <div style="font-size:.75rem;color:#64748b;" th:text="${att.employee.employeeCode}"></div>
+                                </td>
+                                <td th:text="${att.employee.department != null ? att.employee.department.name : '-'}"></td>
+                                <td th:text="${att.date}"></td>
+                                <td>
+                                    <span class="badge"
+                                          th:classappend="${att.status=='PRESENT'} ? 'badge-success' : (${att.status=='ABSENT'} ? 'badge-danger' : 'badge-warning')"
+                                          th:text="${att.status}"></span>
+                                </td>
+                                <td th:text="${att.checkIn ?: '-'}"></td>
+                                <td th:text="${att.checkOut ?: '-'}"></td>
+                                <td th:text="${att.remarks ?: '-'}"></td>
+                                <td>
+                                    <a th:href="@{/admin/attendance/delete/{id}(id=${att.id})}"
+                                       class="btn btn-danger btn-xs"
+                                       onclick="return confirm('Delete this record?')">🗑</a>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(attendances)}">
+                                <td colspan="9" style="text-align:center;padding:32px;color:#64748b;">
+                                    No attendance records for this date.
+                                    <a th:href="@{/admin/attendance/mark}">Mark now?</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

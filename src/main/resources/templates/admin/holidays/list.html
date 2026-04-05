@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>Holidays – EMP</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"></head>
+<div class="sidebar-overlay" id="overlay"></div>
+<script th:src="@{/js/app.js}"></script>
+<body>
+<div class="layout">
+    <div th:replace="~{admin/sidebar :: sidebar('holidays')}"></div>
+    <div class="main-content">
+        <div class="topbar">
+            <h1>🎉 Holiday Calendar</h1>
+            <div class="topbar-right">
+                <a th:href="@{/admin/holidays/add}" class="btn btn-primary btn-sm">+ Add Holiday</a>
+            </div>
+        </div>
+        <div class="page-body">
+            <div th:if="${success}" class="alert alert-success">✅ <span th:text="${success}"></span></div>
+            <div class="card">
+                <div class="card-header"><h3>All Holidays</h3></div>
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>#</th><th>Holiday Name</th><th>Date</th><th>Type</th><th>Description</th><th>Actions</th></tr></thead>
+                        <tbody>
+                        <tr th:each="h, s : ${holidays}">
+                            <td th:text="${s.count}"></td>
+                            <td style="font-weight:600;" th:text="${h.name}"></td>
+                            <td th:text="${h.date}"></td>
+                            <td>
+                                    <span class="badge"
+                                          th:classappend="${h.type=='NATIONAL'} ? 'badge-danger' : (${h.type=='FESTIVAL'} ? 'badge-warning' : 'badge-primary')"
+                                          th:text="${h.type}"></span>
+                            </td>
+                            <td th:text="${h.description ?: '-'}"></td>
+                            <td>
+                                <a th:href="@{/admin/holidays/edit/{id}(id=${h.id})}" class="btn btn-warning btn-xs">✏️ Edit</a>
+                                <a th:href="@{/admin/holidays/delete/{id}(id=${h.id})}" class="btn btn-danger btn-xs" onclick="return confirm('Delete?')">🗑</a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(holidays)}">
+                            <td colspan="6" style="text-align:center;padding:24px;color:#64748b;">No holidays added yet.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body></html>

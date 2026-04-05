@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div class="sidebar-overlay" id="overlay"></div>
+<script th:src="@{/js/app.js}"></script>
+<head>
+    <meta charset="UTF-8">
+    <title>Leave Requests – EMP Management System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="layout">
+    <div th:replace="~{admin/sidebar :: sidebar('leaves')}"></div>
+    <div class="main-content">
+        <div class="topbar">
+            <h1>📅 Leave Requests</h1>
+            <div class="topbar-right">
+                <a th:href="@{/admin/leaves?filter=PENDING}" class="btn btn-warning btn-sm">Pending Only</a>
+                <a th:href="@{/admin/leaves}" class="btn btn-secondary btn-sm">All</a>
+            </div>
+        </div>
+        <div class="page-body">
+            <div th:if="${success}" class="alert alert-success">✅ <span th:text="${success}"></span></div>
+            <div th:if="${error}"   class="alert alert-danger">⚠️ <span th:text="${error}"></span></div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Leave Applications
+                        <span th:if="${filter == 'PENDING'}" class="badge badge-warning" style="margin-left:8px;">Pending Only</span>
+                    </h3>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Employee</th>
+                                <th>Leave Type</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Reason</th>
+                                <th>Applied On</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="leave, stat : ${leaves}">
+                                <td th:text="${stat.count}"></td>
+                                <td>
+                                    <div style="font-weight:600;" th:text="${leave.employee.fullName}"></div>
+                                    <div style="font-size:.75rem;color:#64748b;" th:text="${leave.employee.designation}"></div>
+                                </td>
+                                <td><span class="badge badge-primary" th:text="${leave.leaveType}"></span></td>
+                                <td th:text="${leave.fromDate}"></td>
+                                <td th:text="${leave.toDate}"></td>
+                                <td th:text="${leave.reason}"></td>
+                                <td th:text="${leave.appliedOn}"></td>
+                                <td>
+                                    <span class="badge"
+                                          th:classappend="${leave.status=='APPROVED'} ? 'badge-success' : (${leave.status=='REJECTED'} ? 'badge-danger' : 'badge-warning')"
+                                          th:text="${leave.status}"></span>
+                                </td>
+                                <td>
+                                    <div th:if="${leave.status=='PENDING'}" class="flex-gap">
+                                        <form th:action="@{/admin/leaves/approve/{id}(id=${leave.id})}" method="post" style="display:inline;">
+                                            <button class="btn btn-success btn-xs">✓ Approve</button>
+                                        </form>
+                                        <form th:action="@{/admin/leaves/reject/{id}(id=${leave.id})}" method="post" style="display:inline;">
+                                            <button class="btn btn-danger btn-xs">✗ Reject</button>
+                                        </form>
+                                    </div>
+                                    <div th:if="${leave.status != 'PENDING'}" class="flex-gap">
+                                        <div style="font-size:.75rem;color:#64748b;" th:text="${leave.adminComment ?: 'No comment'}"></div>
+                                        <a th:href="@{/admin/leaves/delete/{id}(id=${leave.id})}"
+                                           class="btn btn-danger btn-xs"
+                                           onclick="return confirm('Delete this record?')">🗑</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(leaves)}">
+                                <td colspan="9" style="text-align:center;padding:32px;color:#64748b;">No leave requests found.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

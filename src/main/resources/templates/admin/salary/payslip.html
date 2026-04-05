@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div class="sidebar-overlay" id="overlay"></div>
+<script th:src="@{/js/app.js}"></script>
+<head>
+    <meta charset="UTF-8">
+    <title>Payslip – EMP Management System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        @media print { .no-print { display: none !important; } .main-content { margin-left: 0 !important; } .sidebar { display: none !important; } }
+    </style>
+</head>
+<body>
+<div class="layout">
+    <div class="no-print" th:replace="~{admin/sidebar :: sidebar('salary')}"></div>
+    <div class="main-content">
+        <div class="topbar no-print">
+            <h1>📄 Payslip</h1>
+            <div class="topbar-right">
+                <button onclick="window.print()" class="btn btn-primary btn-sm">🖨️ Print</button>
+                <a th:href="@{/admin/salary}" class="btn btn-secondary btn-sm">← Back</a>
+            </div>
+        </div>
+        <div class="page-body">
+            <div class="payslip card">
+                <div class="payslip-header">
+                    <h2>🏢 EMP Management System</h2>
+                    <p>Salary Payslip</p>
+                    <p style="margin-top:8px;font-size:.9rem;">
+                        For the month of
+                        <strong th:text="${salary.month} + '/' + ${salary.year}"></strong>
+                    </p>
+                </div>
+
+                <!-- Employee Info -->
+                <div class="payslip-section" style="background:#f0f9ff;border-bottom:1px solid #e2e8f0;">
+                    <div class="form-grid">
+                        <div class="info-item">
+                            <label>Employee Name</label>
+                            <p th:text="${salary.employee.fullName}"></p>
+                        </div>
+                        <div class="info-item">
+                            <label>Employee Code</label>
+                            <p th:text="${salary.employee.employeeCode}"></p>
+                        </div>
+                        <div class="info-item">
+                            <label>Designation</label>
+                            <p th:text="${salary.employee.designation}"></p>
+                        </div>
+                        <div class="info-item">
+                            <label>Department</label>
+                            <p th:text="${salary.employee.department != null ? salary.employee.department.name : '-'}"></p>
+                        </div>
+                        <div class="info-item">
+                            <label>Payment Status</label>
+                            <p><span class="badge" th:classappend="${salary.status=='PAID'} ? 'badge-success' : 'badge-warning'" th:text="${salary.status}"></span></p>
+                        </div>
+                        <div class="info-item">
+                            <label>Pay Period</label>
+                            <p th:text="${salary.month} + ' / ' + ${salary.year}"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Earnings & Deductions -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;">
+                    <div class="payslip-section" style="border-right:1px solid #e2e8f0;">
+                        <h4 style="color:#0284c7;margin-bottom:12px;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;">Earnings</h4>
+                        <div class="payslip-row"><span>Basic Salary</span><span th:text="'₹ ' + ${#numbers.formatDecimal(salary.basicSalary,1,'COMMA',2,'POINT')}"></span></div>
+                        <div class="payslip-row"><span>HRA</span><span th:text="'₹ ' + ${#numbers.formatDecimal(salary.hra,1,'COMMA',2,'POINT')}"></span></div>
+                        <div class="payslip-row"><span>Dearness Allowance</span><span th:text="'₹ ' + ${#numbers.formatDecimal(salary.da,1,'COMMA',2,'POINT')}"></span></div>
+                        <div class="payslip-row"><span>Medical Allowance</span><span th:text="'₹ ' + ${#numbers.formatDecimal(salary.medicalAllowance,1,'COMMA',2,'POINT')}"></span></div>
+                        <div class="payslip-row" style="font-weight:600;">
+                            <span>Gross Earnings</span>
+                            <span th:text="'₹ ' + ${#numbers.formatDecimal(salary.basicSalary + salary.hra + salary.da + salary.medicalAllowance,1,'COMMA',2,'POINT')}"></span>
+                        </div>
+                    </div>
+                    <div class="payslip-section">
+                        <h4 style="color:#dc2626;margin-bottom:12px;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em;">Deductions</h4>
+                        <div class="payslip-row"><span>Provident Fund (PF)</span><span th:text="'₹ ' + ${#numbers.formatDecimal(salary.pf,1,'COMMA',2,'POINT')}"></span></div>
+                        <div class="payslip-row"><span>Tax</span><span th:text="'₹ ' + ${#numbers.formatDecimal(salary.tax,1,'COMMA',2,'POINT')}"></span></div>
+                        <div class="payslip-row"><span>Other Deductions</span><span th:text="'₹ ' + ${#numbers.formatDecimal(salary.otherDeductions,1,'COMMA',2,'POINT')}"></span></div>
+                        <div class="payslip-row" style="font-weight:600;">
+                            <span>Total Deductions</span>
+                            <span th:text="'₹ ' + ${#numbers.formatDecimal(salary.pf + salary.tax + salary.otherDeductions,1,'COMMA',2,'POINT')}"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="payslip-section">
+                    <div class="payslip-total">
+                        <span>💰 NET SALARY PAYABLE</span>
+                        <span th:text="'₹ ' + ${#numbers.formatDecimal(salary.netSalary,1,'COMMA',2,'POINT')}"></span>
+                    </div>
+                </div>
+
+                <div style="padding:16px 20px;text-align:center;font-size:.78rem;color:#64748b;border-top:1px solid #e2e8f0;">
+                    This is a computer-generated payslip and does not require a signature. | EMP Management System
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

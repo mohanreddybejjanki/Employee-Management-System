@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>Overtime – EMP</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"></head>
+<div class="sidebar-overlay" id="overlay"></div>
+<script th:src="@{/js/app.js}"></script>
+<body>
+<div class="layout">
+    <div th:replace="~{admin/sidebar :: sidebar('overtime')}"></div>
+    <div class="main-content">
+        <div class="topbar"><h1>⏰ Overtime Management</h1></div>
+        <div class="page-body">
+            <div th:if="${success}" class="alert alert-success">✅ <span th:text="${success}"></span></div>
+            <div class="card">
+                <div class="card-header"><h3>All Overtime Requests</h3></div>
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>#</th><th>Employee</th><th>Date</th><th>Hours</th><th>Reason</th><th>Applied On</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody>
+                        <tr th:each="o, s : ${overtimes}">
+                            <td th:text="${s.count}"></td>
+                            <td th:text="${o.employee.fullName}"></td>
+                            <td th:text="${o.date}"></td>
+                            <td th:text="${o.hours} + ' hrs'"></td>
+                            <td th:text="${o.reason}"></td>
+                            <td th:text="${o.appliedOn}"></td>
+                            <td>
+                                    <span class="badge"
+                                          th:classappend="${o.status=='APPROVED'} ? 'badge-success' : (${o.status=='REJECTED'} ? 'badge-danger' : 'badge-warning')"
+                                          th:text="${o.status}"></span>
+                            </td>
+                            <td>
+                                <div th:if="${o.status=='PENDING'}" class="flex-gap">
+                                    <form th:action="@{/admin/overtime/approve/{id}(id=${o.id})}" method="post" style="display:inline;">
+                                        <button class="btn btn-success btn-xs">✓ Approve</button>
+                                    </form>
+                                    <form th:action="@{/admin/overtime/reject/{id}(id=${o.id})}" method="post" style="display:inline;">
+                                        <button class="btn btn-danger btn-xs">✗ Reject</button>
+                                    </form>
+                                </div>
+                                <span th:if="${o.status!='PENDING'}" style="font-size:.75rem;color:#64748b;" th:text="${o.adminComment ?: ''}"></span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(overtimes)}">
+                            <td colspan="8" style="text-align:center;padding:24px;color:#64748b;">No overtime requests.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body></html>

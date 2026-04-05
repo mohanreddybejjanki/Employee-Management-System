@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Employees – EMP Management System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<div class="sidebar-overlay" id="overlay"></div>
+<script th:src="@{/js/app.js}"></script>
+<body>
+<div class="layout">
+    <div th:replace="~{admin/sidebar :: sidebar('employees')}"></div>
+    <div class="main-content">
+        <div class="topbar">
+            <h1>👥 Employees</h1>
+            <div class="topbar-right">
+                <a th:href="@{/admin/employees/add}" class="btn btn-primary btn-sm">+ Add Employee</a>
+            </div>
+        </div>
+        <div class="page-body">
+            <div th:if="${success}" class="alert alert-success">✅ <span th:text="${success}"></span></div>
+            <div th:if="${error}"   class="alert alert-danger">⚠️ <span th:text="${error}"></span></div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>All Employees</h3>
+                    <form th:action="@{/admin/employees}" method="get" class="search-bar">
+                        <input type="text" name="search" placeholder="Search employees..."
+                               th:value="${search}" class="form-control">
+                        <button type="submit" class="btn btn-primary btn-sm">🔍 Search</button>
+                        <a th:href="@{/admin/employees}" class="btn btn-secondary btn-sm">Clear</a>
+                    </form>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Code</th>
+                                <th>Name</th>
+                                <th>Department</th>
+                                <th>Designation</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="emp, stat : ${employees}">
+                                <td th:text="${stat.count}"></td>
+                                <td><span class="badge badge-primary" th:text="${emp.employeeCode}"></span></td>
+                                <td>
+                                    <div style="font-weight:600;" th:text="${emp.fullName}"></div>
+                                    <div style="font-size:.75rem;color:#64748b;" th:text="${emp.gender}"></div>
+                                </td>
+                                <td th:text="${emp.department != null ? emp.department.name : '-'}"></td>
+                                <td th:text="${emp.designation}"></td>
+                                <td th:text="${emp.email}"></td>
+                                <td th:text="${emp.phone}"></td>
+                                <td>
+                                    <span class="badge"
+                                          th:classappend="${emp.status == 'ACTIVE'} ? 'badge-success' : 'badge-danger'"
+                                          th:text="${emp.status}"></span>
+                                </td>
+                                <td>
+                                    <div class="flex-gap">
+                                        <a th:href="@{/admin/employees/view/{id}(id=${emp.id})}" class="btn btn-primary btn-xs">👁 View</a>
+                                        <a th:href="@{/admin/employees/edit/{id}(id=${emp.id})}" class="btn btn-warning btn-xs">✏️ Edit</a>
+                                        <a th:href="@{/admin/employees/delete/{id}(id=${emp.id})}"
+                                           class="btn btn-danger btn-xs"
+                                           onclick="return confirm('Delete this employee?')">🗑 Delete</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(employees)}">
+                                <td colspan="9" style="text-align:center;padding:32px;color:#64748b;">
+                                    No employees found. <a th:href="@{/admin/employees/add}">Add one?</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

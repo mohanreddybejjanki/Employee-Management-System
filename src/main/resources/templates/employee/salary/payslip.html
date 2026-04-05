@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Payslip – EMP Management System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="layout">
+    <div th:replace="~{employee/sidebar :: sidebar('salary')}"></div>
+    <div class="main-content">
+        <div class="topbar">
+            <h1>💰 My Payslip</h1>
+            <div class="topbar-right">
+                <a th:href="@{/employee/salary}" class="btn btn-secondary btn-sm">← Back</a>
+                <button onclick="window.print()" class="btn btn-primary btn-sm">🖨 Print</button>
+            </div>
+        </div>
+        <div class="page-body">
+            <div class="card payslip">
+                <div class="payslip-header">
+                    <h2>🏢 EMP Management System</h2>
+                    <p>Salary Slip</p>
+                    <p th:text="'For the Month of: ' + ${salary.month} + ' / ' + ${salary.year}"></p>
+                </div>
+
+                <div class="payslip-section">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;padding:16px;background:#f0f9ff;border-radius:8px;">
+                        <div>
+                            <div class="info-item">
+                                <label>Employee Name</label>
+                                <p th:text="${salary.employee.fullName}"></p>
+                            </div>
+                            <div class="info-item mt-3">
+                                <label>Designation</label>
+                                <p th:text="${salary.employee.designation}"></p>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="info-item">
+                                <label>Employee Code</label>
+                                <p th:text="${salary.employee.employeeCode}"></p>
+                            </div>
+                            <div class="info-item mt-3">
+                                <label>Department</label>
+                                <p th:text="${salary.employee.department != null ? salary.employee.department.name : '-'}"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+                        <div>
+                            <h4 style="font-weight:700;color:#0284c7;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid #0ea5e9;">Earnings</h4>
+                            <div class="payslip-row"><span>Basic Salary</span><span>₹ <span th:text="${#numbers.formatDecimal(salary.basicSalary,1,'COMMA',2,'POINT')}"></span></span></div>
+                            <div class="payslip-row"><span>HRA</span><span>₹ <span th:text="${#numbers.formatDecimal(salary.hra,1,'COMMA',2,'POINT')}"></span></span></div>
+                            <div class="payslip-row"><span>Dearness Allowance</span><span>₹ <span th:text="${#numbers.formatDecimal(salary.da,1,'COMMA',2,'POINT')}"></span></span></div>
+                            <div class="payslip-row"><span>Medical Allowance</span><span>₹ <span th:text="${#numbers.formatDecimal(salary.medicalAllowance,1,'COMMA',2,'POINT')}"></span></span></div>
+                            <div class="payslip-row" style="font-weight:700;color:#15803d;">
+                                <span>Gross Salary</span>
+                                <span>₹ <span th:text="${#numbers.formatDecimal(salary.basicSalary + salary.hra + salary.da + salary.medicalAllowance,1,'COMMA',2,'POINT')}"></span></span>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="font-weight:700;color:#dc2626;margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid #ef4444;">Deductions</h4>
+                            <div class="payslip-row"><span>Provident Fund</span><span>₹ <span th:text="${#numbers.formatDecimal(salary.pf,1,'COMMA',2,'POINT')}"></span></span></div>
+                            <div class="payslip-row"><span>Income Tax</span><span>₹ <span th:text="${#numbers.formatDecimal(salary.tax,1,'COMMA',2,'POINT')}"></span></span></div>
+                            <div class="payslip-row"><span>Other Deductions</span><span>₹ <span th:text="${#numbers.formatDecimal(salary.otherDeductions,1,'COMMA',2,'POINT')}"></span></span></div>
+                            <div class="payslip-row" style="font-weight:700;color:#dc2626;">
+                                <span>Total Deductions</span>
+                                <span>₹ <span th:text="${#numbers.formatDecimal(salary.pf + salary.tax + salary.otherDeductions,1,'COMMA',2,'POINT')}"></span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="payslip-total" style="margin-top:16px;">
+                        <span>💰 NET SALARY (Take Home)</span>
+                        <span>₹ <span th:text="${#numbers.formatDecimal(salary.netSalary,1,'COMMA',2,'POINT')}"></span></span>
+                    </div>
+
+                    <div style="margin-top:16px;text-align:center;">
+                        <span class="badge"
+                              th:classappend="${salary.status == 'PAID'} ? 'badge-success' : 'badge-warning'"
+                              th:text="${salary.status}" style="font-size:.85rem;padding:6px 16px;"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

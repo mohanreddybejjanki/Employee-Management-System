@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>My Assets – EMP</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"></head>
+<body>
+<div class="layout">
+    <div th:replace="~{employee/sidebar :: sidebar('assets')}"></div>
+    <div class="main-content">
+        <div class="topbar">
+            <h1>💻 My Assets</h1>
+            <div class="topbar-right"><span class="badge-pill" th:text="${employee.fullName}"></span></div>
+        </div>
+        <div class="page-body">
+            <div th:if="${assets == null or #lists.isEmpty(assets)}" class="card">
+                <div class="card-body">
+                    <div class="empty-state">
+                        <div class="icon">💻</div>
+                        <p>No assets assigned to you yet.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card" th:if="${assets != null and !assets.isEmpty()}">
+                <div class="card-header"><h3>Assigned Assets</h3></div>
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>#</th><th>Asset Code</th><th>Name</th><th>Type</th><th>Brand</th><th>Condition</th><th>Assigned Date</th></tr></thead>
+                        <tbody>
+                        <tr th:each="a, s : ${assets}">
+                            <td th:text="${s.count}"></td>
+                            <td><span class="badge badge-secondary" th:text="${a.assetCode}"></span></td>
+                            <td style="font-weight:600;" th:text="${a.assetName}"></td>
+                            <td th:text="${a.assetType}"></td>
+                            <td th:text="${a.brand ?: '-'}"></td>
+                            <td>
+                                <span class="badge" th:classappend="${a.condition=='GOOD'} ? 'badge-success' : 'badge-danger'" th:text="${a.condition}"></span>
+                            </td>
+                            <td th:text="${a.assignedDate ?: '-'}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body></html>

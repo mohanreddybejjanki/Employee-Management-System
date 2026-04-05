@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>Exit Management – EMP</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"></head>
+<div class="sidebar-overlay" id="overlay"></div>
+<script th:src="@{/js/app.js}"></script>
+<body>
+<div class="layout">
+    <div th:replace="~{admin/sidebar :: sidebar('exit')}"></div>
+    <div class="main-content">
+        <div class="topbar"><h1>🚪 Exit Management</h1></div>
+        <div class="page-body">
+            <div th:if="${success}" class="alert alert-success">✅ <span th:text="${success}"></span></div>
+            <div class="card">
+                <div class="card-header"><h3>Resignation Requests</h3></div>
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>#</th><th>Employee</th><th>Resignation Date</th><th>Last Working Day</th><th>Notice Period</th><th>Reason</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody>
+                        <tr th:each="e, s : ${exits}">
+                            <td th:text="${s.count}"></td>
+                            <td style="font-weight:600;" th:text="${e.employee.fullName}"></td>
+                            <td th:text="${e.resignationDate}"></td>
+                            <td th:text="${e.lastWorkingDate}"></td>
+                            <td th:text="${e.noticePeriod ?: '-'}"></td>
+                            <td th:text="${e.reason}"></td>
+                            <td>
+                                    <span class="badge"
+                                          th:classappend="${e.status=='ACCEPTED'} ? 'badge-success' : (${e.status=='REJECTED'} ? 'badge-danger' : 'badge-warning')"
+                                          th:text="${e.status}"></span>
+                            </td>
+                            <td>
+                                <div th:if="${e.status=='PENDING'}" class="flex-gap">
+                                    <form th:action="@{/admin/exit/accept/{id}(id=${e.id})}" method="post" style="display:inline;">
+                                        <button class="btn btn-success btn-xs">✓ Accept</button>
+                                    </form>
+                                </div>
+                                <a th:href="@{/admin/exit/delete/{id}(id=${e.id})}" class="btn btn-danger btn-xs" onclick="return confirm('Delete?')">🗑</a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(exits)}">
+                            <td colspan="8" style="text-align:center;padding:24px;color:#64748b;">No resignation requests.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body></html>

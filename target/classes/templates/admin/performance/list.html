@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>Performance – EMP</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"></head>
+<div class="sidebar-overlay" id="overlay"></div>
+<script th:src="@{/js/app.js}"></script>
+<body>
+<div class="layout">
+    <div th:replace="~{admin/sidebar :: sidebar('performance')}"></div>
+    <div class="main-content">
+        <div class="topbar">
+            <h1>⭐ Performance Reviews</h1>
+            <div class="topbar-right">
+                <a th:href="@{/admin/performance/add}" class="btn btn-primary btn-sm">+ Add Review</a>
+            </div>
+        </div>
+        <div class="page-body">
+            <div th:if="${success}" class="alert alert-success">✅ <span th:text="${success}"></span></div>
+            <div class="card">
+                <div class="card-header"><h3>All Performance Reviews</h3></div>
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>#</th><th>Employee</th><th>Year</th><th>Period</th><th>Rating</th><th>Goals</th><th>Status</th><th>Review Date</th><th>Action</th></tr></thead>
+                        <tbody>
+                        <tr th:each="r, s : ${reviews}">
+                            <td th:text="${s.count}"></td>
+                            <td th:text="${r.employee.fullName}"></td>
+                            <td th:text="${r.reviewYear}"></td>
+                            <td><span class="badge badge-primary" th:text="${r.reviewPeriod}"></span></td>
+                            <td>
+                                <span th:text="${r.rating} + ' / 5'"></span>
+                                <span th:if="${r.rating >= 4}"> ⭐</span>
+                            </td>
+                            <td th:text="${r.goals != null ? (r.goals.length() > 40 ? r.goals.substring(0,40)+'...' : r.goals) : '-'}"></td>
+                            <td>
+                                <span class="badge" th:classappend="${r.status=='COMPLETED'} ? 'badge-success' : 'badge-warning'" th:text="${r.status}"></span>
+                            </td>
+                            <td th:text="${r.reviewDate}"></td>
+                            <td>
+                                <a th:href="@{/admin/performance/delete/{id}(id=${r.id})}" class="btn btn-danger btn-xs" onclick="return confirm('Delete?')">🗑</a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(reviews)}">
+                            <td colspan="9" style="text-align:center;padding:24px;color:#64748b;">No reviews yet.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body></html>

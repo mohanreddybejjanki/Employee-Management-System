@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>Add Review – EMP</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"></head>
+<div class="sidebar-overlay" id="overlay"></div>
+<script th:src="@{/js/app.js}"></script>
+<body>
+<div class="layout">
+    <div th:replace="~{admin/sidebar :: sidebar('performance')}"></div>
+    <div class="main-content">
+        <div class="topbar">
+            <h1>⭐ Add Performance Review</h1>
+            <div class="topbar-right"><a th:href="@{/admin/performance}" class="btn btn-secondary btn-sm">← Back</a></div>
+        </div>
+        <div class="page-body">
+            <div class="card">
+                <div class="card-header"><h3>Review Details</h3></div>
+                <div class="card-body">
+                    <form th:action="@{/admin/performance/add}" method="post">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Employee *</label>
+                                <select name="employeeId" class="form-control" required>
+                                    <option value="">Select Employee</option>
+                                    <option th:each="e : ${employees}" th:value="${e.id}" th:text="${e.fullName}"></option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Review Year *</label>
+                                <input type="number" name="reviewYear" class="form-control" value="2026" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Review Period</label>
+                                <select name="reviewPeriod" class="form-control">
+                                    <option value="Q1">Q1 (Jan–Mar)</option>
+                                    <option value="Q2">Q2 (Apr–Jun)</option>
+                                    <option value="Q3">Q3 (Jul–Sep)</option>
+                                    <option value="Q4">Q4 (Oct–Dec)</option>
+                                    <option value="ANNUAL">Annual</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Rating (1-5) *</label>
+                                <select name="rating" class="form-control" required>
+                                    <option value="5">5 – Outstanding</option>
+                                    <option value="4">4 – Exceeds Expectations</option>
+                                    <option value="3">3 – Meets Expectations</option>
+                                    <option value="2">2 – Needs Improvement</option>
+                                    <option value="1">1 – Unsatisfactory</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select name="status" class="form-control">
+                                    <option value="PENDING">Pending</option>
+                                    <option value="COMPLETED">Completed</option>
+                                </select>
+                            </div>
+                            <div class="form-group form-full">
+                                <label>Goals</label>
+                                <textarea name="goals" class="form-control" placeholder="Goals set for this period..."></textarea>
+                            </div>
+                            <div class="form-group form-full">
+                                <label>Achievements</label>
+                                <textarea name="achievements" class="form-control" placeholder="Key achievements..."></textarea>
+                            </div>
+                            <div class="form-group form-full">
+                                <label>Areas of Improvement</label>
+                                <textarea name="areasOfImprovement" class="form-control" placeholder="Where improvement is needed..."></textarea>
+                            </div>
+                            <div class="form-group form-full">
+                                <label>Admin Comments</label>
+                                <textarea name="adminComments" class="form-control" placeholder="Manager comments..."></textarea>
+                            </div>
+                        </div>
+                        <div class="flex-gap" style="margin-top:16px;">
+                            <button type="submit" class="btn btn-primary">💾 Save Review</button>
+                            <a th:href="@{/admin/performance}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body></html>

@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div class="sidebar-overlay" id="overlay"></div>
+<script th:src="@{/js/app.js}"></script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login – EMP Management System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #e0f2fe;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        /* ---- OUTER WRAPPER ---- */
+        .login-wrapper {
+            width: 100%;
+            max-width: 1100px;
+            min-height: 620px;
+            background: #ffffff;
+            border-radius: 28px;
+            display: flex;
+            overflow: hidden;
+            box-shadow:
+                0 40px 80px rgba(56,189,248,.2),
+                0 0 0 1px rgba(56,189,248,.15),
+                inset 0 1px 0 rgba(255,255,255,.9);
+        }
+
+        /* ---- LEFT PANEL ---- */
+        .left-panel {
+            width: 45%;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .left-panel-bg {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 25% 20%, rgba(56,189,248,.9) 0%, transparent 55%),
+                radial-gradient(ellipse at 75% 80%, rgba(14,165,233,.85) 0%, transparent 50%),
+                radial-gradient(ellipse at 10% 90%, rgba(2,132,199,.7) 0%, transparent 50%),
+                radial-gradient(ellipse at 90% 10%, rgba(125,211,252,.8) 0%, transparent 45%),
+                radial-gradient(ellipse at 50% 50%, rgba(56,189,248,.4) 0%, transparent 70%),
+                linear-gradient(145deg, #38bdf8 0%, #0ea5e9 35%, #0284c7 70%, #075985 100%);
+        }
+
+        /* Orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(55px);
+            animation: drift linear infinite;
+        }
+
+        .orb-1 {
+            width: 320px; height: 320px;
+            background: radial-gradient(circle, rgba(255,255,255,.35), rgba(56,189,248,.15));
+            top: -100px; left: -100px;
+            animation-duration: 12s;
+        }
+
+        .orb-2 {
+            width: 260px; height: 260px;
+            background: radial-gradient(circle, rgba(255,255,255,.25), rgba(14,165,233,.1));
+            bottom: -80px; right: -80px;
+            animation-duration: 15s;
+            animation-direction: reverse;
+        }
+
+        .orb-3 {
+            width: 200px; height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,.2), transparent);
+            top: 45%; left: 40%;
+            transform: translate(-50%, -50%);
+            animation-duration: 9s;
+        }
+
+        @keyframes drift {
+            0%   { transform: translate(0, 0) scale(1); }
+            33%  { transform: translate(18px, -14px) scale(1.04); }
+            66%  { transform: translate(-10px, 18px) scale(.97); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+
+        /* Grid overlay */
+        .left-panel-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px);
+            background-size: 48px 48px;
+        }
+
+        /* Left content */
+        .left-content {
+            position: relative;
+            z-index: 10;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 36px;
+        }
+
+        /* Brand */
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 44px; height: 44px;
+            background: rgba(255,255,255,.25);
+            border: 1.5px solid rgba(255,255,255,.5);
+            border-radius: 13px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.25rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 16px rgba(0,0,0,.1);
+        }
+
+        .brand-name {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -.02em;
+            text-shadow: 0 1px 8px rgba(0,0,0,.15);
+        }
+
+        .brand-name span {
+            color: rgba(255,255,255,.75);
+            font-weight: 500;
+        }
+
+        /* Center illustration */
+        .left-illustration {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        /* Floating stat cards */
+        .float-cards {
+            position: relative;
+            width: 280px;
+            height: 210px;
+        }
+
+        .float-card {
+            position: absolute;
+            background: rgba(255,255,255,.18);
+            border: 1.5px solid rgba(255,255,255,.35);
+            border-radius: 18px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 18px 22px;
+            box-shadow:
+                0 8px 32px rgba(0,0,0,.1),
+                inset 0 1px 0 rgba(255,255,255,.4);
+        }
+
+        .float-card-1 {
+            width: 210px;
+            top: 0; left: 10px;
+            animation: floatUp 4s ease-in-out infinite;
+        }
+
+        .float-card-2 {
+            width: 175px;
+            bottom: 0; right: 0;
+            animation: floatUp 5s ease-in-out infinite .8s;
+        }
+
+        @keyframes floatUp {
+            0%, 100% { transform: translateY(0) rotate(var(--rot, -2deg)); }
+            50%       { transform: translateY(-10px) rotate(var(--rot, -2deg)); }
+        }
+
+        .float-card-1 { --rot: -2deg; }
+        .float-card-2 { --rot:  3deg; }
+
+        .float-card-label {
+            font-size: .62rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            color: rgba(255,255,255,.7);
+            margin-bottom: 6px;
+        }
+
+        .float-card-value {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -.02em;
+            text-shadow: 0 1px 4px rgba(0,0,0,.1);
+        }
+
+        .float-card-sub {
+            font-size: .72rem;
+            color: rgba(255,255,255,.65);
+            margin-top: 3px;
+        }
+
+        .float-card-bar {
+            margin-top: 10px;
+            height: 4px;
+            background: rgba(255,255,255,.2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .float-card-bar-fill {
+            height: 100%;
+            background: rgba(255,255,255,.75);
+            border-radius: 4px;
+        }
+
+        .float-card-dots {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.3);
+        }
+
+        .dot.on { background: rgba(255,255,255,.85); }
+
+        /* Tagline */
+        .tagline { text-align: center; }
+
+        .tagline h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -.03em;
+            line-height: 1.3;
+            text-shadow: 0 2px 12px rgba(0,0,0,.15);
+        }
+
+        .tagline p {
+            font-size: .82rem;
+            color: rgba(255,255,255,.72);
+            margin-top: 10px;
+            line-height: 1.65;
+        }
+
+        /* Slide dots */
+        .slide-dots {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .slide-dot {
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(255,255,255,.3);
+        }
+
+        .slide-dot.short  { width: 16px; }
+        .slide-dot.medium { width: 24px; }
+        .slide-dot.long   { width: 38px; background: rgba(255,255,255,.85); }
+
+        /* ---- RIGHT PANEL ---- */
+        .right-panel {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 52px 56px;
+            background: #ffffff;
+            position: relative;
+        }
+
+        /* Subtle blue tint on right panel */
+        .right-panel::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 100% 0%, rgba(56,189,248,.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 0% 100%, rgba(14,165,233,.04) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        /* Left border accent */
+        .right-panel::after {
+            content: '';
+            position: absolute;
+            top: 10%; left: 0;
+            width: 1px;
+            height: 80%;
+            background: linear-gradient(180deg,
+                transparent 0%,
+                rgba(56,189,248,.3) 30%,
+                rgba(56,189,248,.5) 50%,
+                rgba(56,189,248,.3) 70%,
+                transparent 100%
+            );
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 360px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #0c1a2e;
+            letter-spacing: -.04em;
+            line-height: 1.15;
+            margin-bottom: 8px;
+        }
+
+        .form-subtitle {
+            font-size: .85rem;
+            color: #64748b;
+            margin-bottom: 34px;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        /* Flash error */
+        .flash-error {
+            background: #fff1f1;
+            border: 1.5px solid rgba(239,68,68,.3);
+            color: #b91c1c;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: .82rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        /* Field groups */
+        .field-group {
+            margin-bottom: 20px;
+        }
+
+        .field-group label {
+            display: block;
+            font-size: .75rem;
+            font-weight: 700;
+            color: #475569;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .field-group input {
+            width: 100%;
+            padding: 13px 16px;
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            color: #0f172a;
+            font-size: .88rem;
+            font-family: 'Inter', sans-serif;
+            transition: all .2s ease;
+            outline: none;
+        }
+
+        .field-group input::placeholder {
+            color: #94a3b8;
+        }
+
+        .field-group input:hover {
+            border-color: #7dd3fc;
+            background: #f0f9ff;
+        }
+
+        .field-group input:focus {
+            border-color: #38bdf8;
+            background: #f0f9ff;
+            box-shadow:
+                0 0 0 4px rgba(56,189,248,.12),
+                0 1px 3px rgba(56,189,248,.1);
+        }
+
+        /* Login button */
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 50%, #0284c7 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: .9rem;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all .25s ease;
+            letter-spacing: .01em;
+            margin-top: 4px;
+            box-shadow:
+                0 4px 20px rgba(56,189,248,.4),
+                0 1px 0 rgba(255,255,255,.2) inset;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Shimmer sweep on hover */
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg,
+                transparent,
+                rgba(255,255,255,.2),
+                transparent
+            );
+            transition: left .5s ease;
+        }
+
+        .btn-login:hover::before { left: 100%; }
+
+        .btn-login:hover {
+            background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 50%, #0ea5e9 100%);
+            box-shadow:
+                0 8px 28px rgba(56,189,248,.5),
+                0 1px 0 rgba(255,255,255,.25) inset;
+            transform: translateY(-2px);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(56,189,248,.3);
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: 26px 0;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #bae6fd, transparent);
+        }
+
+        .divider-text {
+            font-size: .72rem;
+            color: #94a3b8;
+            font-weight: 600;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        /* Demo credentials box */
+        .demo-box {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border: 1.5px solid #bae6fd;
+            border-radius: 14px;
+            padding: 16px 20px;
+            box-shadow: 0 2px 12px rgba(56,189,248,.1);
+        }
+
+        .demo-box-title {
+            font-size: .68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            color: #0284c7;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .demo-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 7px 0;
+            border-bottom: 1px solid rgba(56,189,248,.12);
+        }
+
+        .demo-row:last-child { border-bottom: none; padding-bottom: 0; }
+        .demo-row:first-of-type { padding-top: 0; }
+
+        .demo-role {
+            font-size: .74rem;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .demo-creds {
+            font-size: .74rem;
+            color: #0369a1;
+            font-family: 'Courier New', monospace;
+            background: rgba(56,189,248,.15);
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-weight: 700;
+            border: 1px solid rgba(56,189,248,.2);
+            letter-spacing: .02em;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-wrapper">
+
+    <!-- ====== LEFT PANEL ====== -->
+    <div class="left-panel">
+        <div class="left-panel-bg"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="left-panel-grid"></div>
+
+        <div class="left-content">
+
+            <!-- Brand top-left -->
+            <div class="brand">
+                <div class="brand-icon">🏢</div>
+                <div class="brand-name">EMP <span>Management</span></div>
+            </div>
+
+            <!-- Center floating cards + tagline -->
+            <div class="left-illustration">
+                <div class="float-cards">
+                    <div class="float-card float-card-1">
+                        <div class="float-card-label">Total Employees</div>
+                        <div class="float-card-value">24</div>
+                        <div class="float-card-sub">Across 6 Departments</div>
+                        <div class="float-card-bar">
+                            <div class="float-card-bar-fill" style="width:80%"></div>
+                        </div>
+                    </div>
+                    <div class="float-card float-card-2">
+                        <div class="float-card-label">Attendance</div>
+                        <div class="float-card-value">96.4%</div>
+                        <div class="float-card-sub">This Month</div>
+                        <div class="float-card-dots">
+                            <div class="dot on"></div>
+                            <div class="dot on"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tagline">
+                    <h2>Manage Your<br>Workforce Smarter</h2>
+                    <p>Complete ERP for attendance, payroll,<br>leaves, assets and performance.</p>
+                </div>
+            </div>
+
+            <!-- Bottom slide dots -->
+            <div class="slide-dots">
+                <div class="slide-dot short"></div>
+                <div class="slide-dot medium"></div>
+                <div class="slide-dot long"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ====== RIGHT PANEL ====== -->
+    <div class="right-panel">
+        <div class="form-container">
+
+            <div class="form-title">Welcome back 👋</div>
+            <div class="form-subtitle">Sign in to your EMP portal account</div>
+
+            <div th:if="${error}" class="flash-error">
+                ⚠️ <span th:text="${error}"></span>
+            </div>
+
+            <form th:action="@{/login}" method="post">
+                <div class="field-group">
+                    <label>Username</label>
+                    <input type="text"
+                           name="username"
+                           placeholder="Enter your username"
+                           required
+                           autofocus>
+                </div>
+
+                <div class="field-group">
+                    <label>Password</label>
+                    <input type="password"
+                           name="password"
+                           placeholder="Enter your password"
+                           required>
+                </div>
+
+                <button type="submit" class="btn-login">
+                    Sign In →
+                </button>
+            </form>
+
+            <div class="divider">
+                <div class="divider-line"></div>
+                <div class="divider-text">Demo Credentials</div>
+                <div class="divider-line"></div>
+            </div>
+
+            <div class="demo-box">
+                <div class="demo-box-title">🔑 Quick Access</div>
+                <div class="demo-row">
+                    <span class="demo-role">Administrator</span>
+                    <span class="demo-creds">admin / admin123</span>
+                </div>
+                <div class="demo-row">
+                    <span class="demo-role">Employee (Male)</span>
+                    <span class="demo-creds">arjun / emp123</span>
+                </div>
+                <div class="demo-row">
+                    <span class="demo-role">Employee (Female)</span>
+                    <span class="demo-creds">priya / emp123</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

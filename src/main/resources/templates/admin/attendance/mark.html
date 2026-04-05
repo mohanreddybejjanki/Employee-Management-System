@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mark Attendance – EMP Management System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<div class="sidebar-overlay" id="overlay"></div>
+<script th:src="@{/js/app.js}"></script>
+<body>
+<div class="layout">
+    <div th:replace="~{admin/sidebar :: sidebar('attendance')}"></div>
+    <div class="main-content">
+        <div class="topbar">
+            <h1>✅ Mark Attendance</h1>
+            <div class="topbar-right">
+                <a th:href="@{/admin/attendance}" class="btn btn-secondary btn-sm">← Back</a>
+            </div>
+        </div>
+        <div class="page-body">
+            <div th:if="${success}" class="alert alert-success">✅ <span th:text="${success}"></span></div>
+
+            <div class="card">
+                <div class="card-header"><h3>Mark Attendance for Employees</h3></div>
+                <div class="card-body">
+                    <form th:action="@{/admin/attendance/mark}" method="post">
+                        <div class="form-group mb-4" style="max-width:250px;">
+                            <label>Attendance Date *</label>
+                            <input type="date" name="date" class="form-control"
+                                   th:value="${today}" required>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Employee</th>
+                                        <th>Department</th>
+                                        <th>Designation</th>
+                                        <th>Status *</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="emp, stat : ${employees}">
+                                        <td th:text="${stat.count}"></td>
+                                        <td>
+                                            <input type="hidden" name="employeeIds" th:value="${emp.id}">
+                                            <div style="font-weight:600;" th:text="${emp.fullName}"></div>
+                                            <div style="font-size:.75rem;color:#64748b;" th:text="${emp.employeeCode}"></div>
+                                        </td>
+                                        <td th:text="${emp.department != null ? emp.department.name : '-'}"></td>
+                                        <td th:text="${emp.designation}"></td>
+                                        <td>
+                                            <select name="statuses" class="form-control" style="width:140px;">
+                                                <option value="PRESENT">✅ Present</option>
+                                                <option value="ABSENT">❌ Absent</option>
+                                                <option value="HALF_DAY">🌓 Half Day</option>
+                                                <option value="HOLIDAY">🎉 Holiday</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(employees)}">
+                                        <td colspan="5" style="text-align:center;padding:24px;color:#64748b;">
+                                            No active employees found.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="flex-gap" style="margin-top:20px;">
+                            <button type="submit" class="btn btn-primary">💾 Save Attendance</button>
+                            <a th:href="@{/admin/attendance}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

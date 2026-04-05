@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Attendance – EMP Management System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="layout">
+    <div th:replace="~{employee/sidebar :: sidebar('attendance')}"></div>
+    <div class="main-content">
+        <div class="topbar">
+            <h1>📋 My Attendance</h1>
+        </div>
+        <div class="page-body">
+
+            <!-- Summary Cards -->
+            <div class="stats-grid" style="margin-bottom:24px;">
+                <div class="stat-card">
+                    <div class="stat-icon green">✅</div>
+                    <div class="stat-info">
+                        <h3 th:text="${presentCount}">0</h3>
+                        <p>Days Present</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon red">❌</div>
+                    <div class="stat-info">
+                        <h3 th:text="${absentCount}">0</h3>
+                        <p>Days Absent</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon sky">📊</div>
+                    <div class="stat-info">
+                        <h3 th:text="${presentCount + absentCount}">0</h3>
+                        <p>Total Records</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><h3>Attendance History</h3></div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Check In</th>
+                                <th>Check Out</th>
+                                <th>Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="att, stat : ${attendances}">
+                                <td th:text="${stat.count}"></td>
+                                <td th:text="${att.date}"></td>
+                                <td>
+                                    <span class="badge"
+                                          th:classappend="${att.status=='PRESENT'} ? 'badge-success' : (${att.status=='ABSENT'} ? 'badge-danger' : 'badge-warning')"
+                                          th:text="${att.status}"></span>
+                                </td>
+                                <td th:text="${att.checkIn ?: '-'}"></td>
+                                <td th:text="${att.checkOut ?: '-'}"></td>
+                                <td th:text="${att.remarks ?: '-'}"></td>
+                            </tr>
+                            <tr th:if="${attendances == null or #lists.isEmpty(attendances)}">
+                                <td colspan="6" style="text-align:center;padding:32px;color:#64748b;">
+                                    No attendance records found yet.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
